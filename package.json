@@ -1,0 +1,88 @@
+{
+  "name": "gymscore-local",
+  "version": "1.0.0",
+  "description": "Offline-first, lokales Sport-Assessment-System für Schulen und Vereine",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "dev:server": "tsup src/server/server.ts --format cjs --out-dir dist/server --external better-sqlite3 --watch --onSuccess \"node dist/server/server.js\"",
+    "dev:renderer": "vite",
+    "dev:helper": "vite -c vite.helper.config.ts",
+    "dev": "concurrently -k -n \"SERVER,DESKTOP,HELPER\" -c \"blue,green,yellow\" \"npm run dev:server\" \"npm run dev:renderer\" \"npm run dev:helper\"",
+    "build:server": "tsup src/server/index.ts src/server/server.ts --format cjs --out-dir dist/server --external better-sqlite3",
+    "build:main": "tsup src/main/main.ts src/main/preload.ts --format cjs --out-dir dist/main --external electron,better-sqlite3",
+    "build:renderer": "vite build",
+    "build:helper": "vite build -c vite.helper.config.ts",
+    "build": "npm run build:server && npm run build:main && npm run build:renderer && npm run build:helper",
+    "start": "node dist/server/server.js",
+    "electron:dev": "concurrently -k -n \"VITE,SERVER,ELECTRON\" -c \"green,blue,magenta\" \"vite\" \"tsup src/server/server.ts --format cjs --out-dir dist/server --external better-sqlite3 --watch --onSuccess \\\"node dist/server/server.js\\\"\" \"wait-on http://localhost:5173 && npm run build:main && electron .\"",
+    "electron:start": "electron .",
+    "electron:build": "npm run build && electron-builder",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "keywords": [
+    "sportfest",
+    "assessment",
+    "offline-first",
+    "school-sports",
+    "electron",
+    "sqlite"
+  ],
+  "author": "GymScore Local Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "lucide-react": "^1.43.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwind-merge": "^3.6.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.5.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@typescript-eslint/eslint-plugin": "^8.70.0",
+    "@typescript-eslint/parser": "^8.70.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.5.5",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^10.10.0",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^3.4.19",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.2",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "org.gymscore.local",
+    "productName": "GymScore Local",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "!node_modules/**/*",
+      "node_modules/better-sqlite3/**/*"
+    ],
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**/*"
+    ]
+  }
+}

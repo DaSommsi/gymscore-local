@@ -1,0 +1,9 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+
+# Mark binary files explicitly
+*.xlsx binary
+*.ico binary
+*.png binary
+*.jpg binary
